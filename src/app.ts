@@ -14,3 +14,5 @@ app.use("/api/exams", examRoutes);
 app.use("/api/sections", sectionRoutes);
 app.use("/api/questions", questionRoutes);
 app.use("/api/users", userRoutes);
+
+export default app;
