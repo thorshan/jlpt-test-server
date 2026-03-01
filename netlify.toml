@@ -1,0 +1,16 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
+
+# This maps your-site.netlify.app/api/... to your functions
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# This fixes the "Page Not Found" when you refresh a React route (like /manual)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
