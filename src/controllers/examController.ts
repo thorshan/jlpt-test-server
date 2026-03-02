@@ -13,6 +13,12 @@ export const getExams = asyncHandler(async (req: Request, res: Response) => {
   res.status(200).json({ success: true, data: exams });
 });
 
+export const getExam = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const exam = await Exam.findById(id).populate("sections");
+  res.status(200).json({ success: true, data: exam });
+});
+
 // 3. CREATE Exam
 export const createExam = asyncHandler(async (req: Request, res: Response) => {
   const newExam = await Exam.create(req.body);
@@ -29,11 +35,10 @@ export const createExam = asyncHandler(async (req: Request, res: Response) => {
 export const updateExam = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const updatedExam = await Exam.findByIdAndUpdate(
-    id,
-    req.body,
-    { new: true, runValidators: true }, // Returns the modified doc + checks schema rules
-  ).populate("sections");
+  const updatedExam = await Exam.findByIdAndUpdate(id, req.body, {
+    new: true,
+    runValidators: true,
+  }).populate("sections");
 
   if (!updatedExam) {
     return res.status(404).json({ success: false, message: "Exam not found" });

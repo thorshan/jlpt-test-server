@@ -4,13 +4,14 @@ import {
   createExam,
   updateExam,
   deleteExam,
+  getExam,
 } from "../controllers/examController.js";
 
 const router = Router();
 
-// Mount specific routers
 router.get("/", getExams);
 router.post("/", createExam);
+router.get("/:id", getExam);
 router.put("/:id", updateExam);
 router.delete("/:id", deleteExam);
 
