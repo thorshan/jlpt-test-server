@@ -19,6 +19,11 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   res.json({ success: true, data: user });
 });
 
+export const getUser = asyncHandler(async (req: Request, res: Response) => {
+  const user = await User.findById(req.params.id);
+  res.json({ success: true, data: user });
+});
+
 export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
   const users = await User.find().sort("-createdAt");
   res.json({ success: true, data: users });
