@@ -15,7 +15,10 @@ export const getExams = asyncHandler(async (req: Request, res: Response) => {
 
 export const getExam = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const exam = await Exam.findById(id).populate("sections");
+  const exam = await Exam.findById(id).populate({
+    path: "sections",
+    populate: { path: "questions" },
+  });
   res.status(200).json({ success: true, data: exam });
 });
 
