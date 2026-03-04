@@ -17,21 +17,19 @@ const resultSchema = new mongoose.Schema(
       enum: ["N1", "N2", "N3", "N4", "N5"],
       required: true,
     },
-    // Detailed breakdown per section
     sectionDetails: [
       {
         sectionTitle: String,
         earnedPoints: Number,
         totalPoints: Number,
         gradeJLPT: { type: String, enum: ["A", "B", "C"] },
-        passed: { type: Boolean, default: false }, // Did they hit the minPassedMark?
+        passed: { type: Boolean, default: false },
       },
     ],
     // Overall Stats
     totalEarnedPoints: { type: Number, required: true },
-    totalPossiblePoints: { type: Number, required: true }, // The 180 (or 170) points total
+    totalPossiblePoints: { type: Number, required: true },
 
-    // Final Status: True only if (totalPoints >= passingScore) AND (all sections passed)
     status: {
       type: Boolean,
       default: false,

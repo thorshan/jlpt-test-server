@@ -26,7 +26,6 @@ export const getExam = asyncHandler(async (req: Request, res: Response) => {
 export const createExam = asyncHandler(async (req: Request, res: Response) => {
   const newExam = await Exam.create(req.body);
 
-  // Important: Return the created object so the frontend can update state instantly
   res.status(201).json({
     success: true,
     message: "Exam created.",

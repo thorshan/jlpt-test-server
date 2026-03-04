@@ -11,6 +11,11 @@ const examSchema = new mongoose.Schema(
     desc: { type: String },
     sections: [{ type: mongoose.Schema.Types.ObjectId, ref: "Section" }],
     passingScore: { type: Number, default: 80 },
+    category: {
+      type: String,
+      enum: ["JLPT Old Questions", "Level Test", "Custom Test"],
+      default: "Custom Test",
+    },
   },
   { timestamps: true },
 );
