@@ -1,21 +1,15 @@
+import mongoose from "mongoose";
 import dotenv from "dotenv";
+
 dotenv.config();
 
-import app from "./app.js";
-import { dbConnection } from "./config/database.js";
+const mongoUri = process.env.MONGO_URI;
+if (!mongoUri) throw new Error("MONGO_URI not defined");
 
-const PORT = process.env.PORT || 3000;
-
-(async () => {
-  try {
-    await dbConnection();
-    console.log("[MONGODB] : Database connected");
-
-    app.listen(PORT, () => {
-      console.log(`[SYSTEM] : Local Server running on port ${PORT}`);
-    });
-  } catch (error) {
-    console.error("[MONGODB] : Failed to connect to DB", error);
+mongoose
+  .connect(mongoUri)
+  .then(() => console.log("[MONGODB] Connected"))
+  .catch((err) => {
+    console.error("[MONGODB] Connection failed", err);
     process.exit(1);
-  }
-})();
+  });
