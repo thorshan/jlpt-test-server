@@ -9,7 +9,7 @@ import questionRoutes from "./routes/questionRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import resultRoutes from "./routes/resultRoutes.js";
 
-export const app = express();
+const app = express();
 
 app.use(cors());
 app.use(express.json());
@@ -30,3 +30,5 @@ app.use("/api/users", userRoutes);
 app.use("/api/results", resultRoutes);
 
 app.get("/api/health", (req, res) => res.send("System Online"));
+
+export default app;
