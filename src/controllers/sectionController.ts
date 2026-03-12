@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import Section from "../models/Section.js";
+import Activity from "../models/Activity.js";
 
 // Helper for catching async errors
 export const asyncHandler =
@@ -22,10 +23,13 @@ export const getSections = asyncHandler(async (req: Request, res: Response) => {
 // 2. CREATE Section
 export const createSections = asyncHandler(
   async (req: Request, res: Response) => {
-    // FIX: Capture the created section
     const newSection = await Section.create(req.body);
 
-    // FIX: Return 'data' so React state can update [...prev, res.data.data]
+    await Activity.create({
+      action: "SECTION_CREATED",
+      message: `Section : ${newSection.title} created by ${req.user?.name}`,
+      status: "SUCCESS",
+    });
     res.status(201).json({
       success: true,
       message: "Section created.",
@@ -42,7 +46,7 @@ export const updateSection = asyncHandler(
     const updatedSection = await Section.findByIdAndUpdate(id, req.body, {
       new: true,
       runValidators: true,
-    }).populate("questions"); // Populate so the frontend UI shows the question text immediately
+    }).populate("questions");
 
     if (!updatedSection) {
       return res

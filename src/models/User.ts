@@ -7,6 +7,11 @@ const userSchema = new mongoose.Schema(
       required: [true, "Name is required."],
       trim: true,
     },
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
     level: {
       type: String,
       default: "N5",
@@ -15,14 +20,24 @@ const userSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    expireAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
   },
 );
 
-// --- THE AUTO-DELETE LOGIC ---
-// 1 week = 60 seconds * 60 minutes * 24 hours * 7 days = 604800 seconds
-userSchema.index({ createdAt: 1 }, { expireAfterSeconds: 604800 });
+userSchema.index({ expireAt: 1 }, { expireAfterSeconds: 0 });
+
+userSchema.pre("save", function () {
+  if (this.role === "admin") {
+    this.expireAt = null;
+  } else {
+    this.expireAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  }
+});
 
 export default mongoose.model("User", userSchema);

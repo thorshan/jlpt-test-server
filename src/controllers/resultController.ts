@@ -26,7 +26,9 @@ export const getResults = asyncHandler(async (req: Request, res: Response) => {
     return;
   }
 
-  const results = await Results.find({ user: userId }).populate("user");
+  const results = await Results.find({ user: userId })
+    .populate("user")
+    .populate("exam");
 
   res.json({
     success: true,

@@ -8,6 +8,7 @@ import sectionRoutes from "./routes/sectionRoutes.js";
 import questionRoutes from "./routes/questionRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import resultRoutes from "./routes/resultRoutes.js";
+import activityRoutes from "./routes/ActivityRoutes.js";
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use("/api/sections", sectionRoutes);
 app.use("/api/questions", questionRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/results", resultRoutes);
+app.use("/api/activities", activityRoutes);
 
 app.get("/api/health", (req, res) => res.send("System Online"));
 
