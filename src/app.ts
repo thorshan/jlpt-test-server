@@ -8,7 +8,7 @@ import sectionRoutes from "./routes/sectionRoutes.js";
 import questionRoutes from "./routes/questionRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import resultRoutes from "./routes/resultRoutes.js";
-import activityRoutes from "./routes/ActivityRoutes.js";
+import activityRoutes from "./routes/activityRoutes.js";
 
 const app = express();
 
