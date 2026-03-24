@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema(
     },
     expireAt: {
       type: Date,
-      default: null,
+      default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     },
   },
   {
@@ -30,14 +30,6 @@ const userSchema = new mongoose.Schema(
   },
 );
 
-userSchema.index({ expireAt: 1 }, { expireAfterSeconds: 0 });
-
-userSchema.pre("save", function () {
-  if (this.role === "admin") {
-    this.expireAt = null;
-  } else {
-    this.expireAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-  }
-});
+userSchema.index({ expiredAt: 1 }, { expireAfterSeconds: 0 });
 
 export default mongoose.model("User", userSchema);
