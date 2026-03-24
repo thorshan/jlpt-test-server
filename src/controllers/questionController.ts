@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import Question from "../models/Question.js";
+import Activity from "../models/Activity.js";
 
 // Helper for catching async errors
 export const asyncHandler =
@@ -25,7 +26,12 @@ export const createQuestion = asyncHandler(
     // FIX: Store the result in a variable
     const newQuestion = await Question.create(req.body);
 
-    // FIX: Return the 'data' field so the frontend doesn't get 'undefined'
+    await Activity.create({
+      action: "QUESTION_CREATED",
+      message: `${req.user?.name} created question [ID : ${newQuestion._id} | Title : ${newQuestion.text}]`,
+      status: "SUCCESS",
+    });
+
     res.status(201).json({
       success: true,
       message: "Question created.",
@@ -39,17 +45,22 @@ export const updateQuestion = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const updatedQuestion = await Question.findByIdAndUpdate(
-      id,
-      req.body,
-      { new: true, runValidators: true }, // 'new: true' returns the modified document
-    );
+    const updatedQuestion = await Question.findByIdAndUpdate(id, req.body, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!updatedQuestion) {
       return res
         .status(404)
         .json({ success: false, message: "Question not found" });
     }
+
+    await Activity.create({
+      action: "QUESTION_UPDATED",
+      message: `${req.user?.name} updated question [ ID : ${id}]`,
+      status: "SUCCESS",
+    });
 
     res.status(200).json({
       success: true,
@@ -70,6 +81,12 @@ export const deleteQuestion = asyncHandler(
         .status(404)
         .json({ success: false, message: "Question not found" });
     }
+
+    await Activity.create({
+      action: "QUESTION_DELETED",
+      message: `${req.user?.name} deleted a question [ ID : ${id} | Title : ${deleted.text}]`,
+      status: "SUCCESS",
+    });
 
     res.status(200).json({
       success: true,

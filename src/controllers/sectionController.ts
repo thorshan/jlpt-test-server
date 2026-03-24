@@ -27,9 +27,10 @@ export const createSections = asyncHandler(
 
     await Activity.create({
       action: "SECTION_CREATED",
-      message: `Section : ${newSection.title} created by ${req.user?.name}`,
+      message: `${req.user?.name} created section [ ID : ${newSection._id} | Title : ${newSection.title}]`,
       status: "SUCCESS",
     });
+
     res.status(201).json({
       success: true,
       message: "Section created.",
@@ -54,6 +55,12 @@ export const updateSection = asyncHandler(
         .json({ success: false, message: "Section not found" });
     }
 
+    await Activity.create({
+      action: "SECTION_UPDATED",
+      message: `${req.user?.name} updeated section [ ID : ${id}]`,
+      status: "SUCCESS",
+    });
+
     res.status(200).json({
       success: true,
       data: updatedSection,
@@ -73,6 +80,12 @@ export const deleteSection = asyncHandler(
         .status(404)
         .json({ success: false, message: "Section not found" });
     }
+
+    await Activity.create({
+      action: "SECTION_DELETED",
+      message: `${req.user?.name} deleted section [ ID : ${id} | Title : ${deleted.title}]`,
+      status: "SUCCESS",
+    });
 
     res.status(200).json({
       success: true,

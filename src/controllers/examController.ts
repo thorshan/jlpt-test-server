@@ -1,3 +1,4 @@
+import Activity from "../models/Activity.js";
 import Exam from "../models/Exam.js";
 import { Request, Response, NextFunction } from "express";
 
@@ -26,6 +27,12 @@ export const getExam = asyncHandler(async (req: Request, res: Response) => {
 export const createExam = asyncHandler(async (req: Request, res: Response) => {
   const newExam = await Exam.create(req.body);
 
+  await Activity.create({
+    action: "EXAM_CREATED",
+    message: `${req.user?.name} created exam [ ID : ${newExam._id} | Title : ${newExam.title}]`,
+    status: "SUCCESS",
+  });
+
   res.status(201).json({
     success: true,
     message: "Exam created.",
@@ -46,6 +53,12 @@ export const updateExam = asyncHandler(async (req: Request, res: Response) => {
     return res.status(404).json({ success: false, message: "Exam not found" });
   }
 
+  await Activity.create({
+    action: "EXAM_UPDATED",
+    message: `${req.user?.name} updeated exam [ ID : ${id}]`,
+    status: "SUCCESS",
+  });
+
   res.status(200).json({
     success: true,
     data: updatedExam,
@@ -61,6 +74,12 @@ export const deleteExam = asyncHandler(async (req: Request, res: Response) => {
   if (!deletedExam) {
     return res.status(404).json({ success: false, message: "Exam not found" });
   }
+
+  await Activity.create({
+    action: "EXAM_DELETED",
+    message: `${req.user?.name} deleted exam [ ID : ${id} | Title : ${deletedExam.title}]`,
+    status: "SUCCESS",
+  });
 
   res.status(200).json({ success: true, data: null, message: "Exam deleted" });
 });

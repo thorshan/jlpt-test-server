@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import Results from "../models/Results.js";
+import Activity from "../models/Activity.js";
 
 // Helper for catching async errors
 export const asyncHandler =
@@ -9,6 +10,12 @@ export const asyncHandler =
 
 export const examResult = asyncHandler(async (req: Request, res: Response) => {
   const results = await Results.create(req.body);
+
+  await Activity.create({
+    action: "RESULT_CREATED",
+    message: `${req.user?.name} finished test [ID : ${results._id} ]`,
+    status: "SUCCESS",
+  });
   res.json({
     success: true,
     data: results,
