@@ -8,15 +8,16 @@ import {
   updateRole,
   updateUser,
 } from "../controllers/userController.js";
+import { auth } from "../middleware/authMiddleware.js";
 
 const router = Router();
 
 // Mount specific routers
-router.get("/", getAllUsers);
+router.get("/", auth, getAllUsers);
 router.post("/", createUsers);
 router.get("/:id", getUser);
 router.put("/:id", updateUser);
-router.put("/:id/role", updateRole);
+router.put("/:id/role", auth, updateRole);
 router.delete("/:id", clearUsers);
 
 router.post("/auth", loginUser);

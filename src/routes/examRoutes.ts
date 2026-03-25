@@ -6,13 +6,14 @@ import {
   deleteExam,
   getExam,
 } from "../controllers/examController.js";
+import { auth } from "../middleware/authMiddleware.js";
 
 const router = Router();
 
-router.get("/", getExams);
-router.post("/", createExam);
-router.get("/:id", getExam);
-router.put("/:id", updateExam);
-router.delete("/:id", deleteExam);
+router.get("/", auth, getExams);
+router.post("/", auth, createExam);
+router.get("/:id", auth, getExam);
+router.put("/:id", auth, updateExam);
+router.delete("/:id", auth, deleteExam);
 
 export default router;

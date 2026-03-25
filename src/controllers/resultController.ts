@@ -43,6 +43,22 @@ export const getResults = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+export const getResultsById = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const results = await Results.findById(id);
+    if (!results)
+      return res.json({
+        success: false,
+        message: "Result not found.",
+      });
+    res.json({
+      success: true,
+      data: results,
+    });
+  },
+);
+
 export const getAllResults = asyncHandler(
   async (req: Request, res: Response) => {
     const results = await Results.find()

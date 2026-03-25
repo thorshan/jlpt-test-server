@@ -1,9 +1,10 @@
 import { Router } from "express";
 import Activity from "../models/Activity.js";
+import { auth } from "../middleware/authMiddleware.js";
 
 const router = Router();
 
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
   try {
     const logs = await Activity.find().sort({ createdAt: -1 });
 
