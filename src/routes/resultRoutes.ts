@@ -1,8 +1,13 @@
 import { Router } from "express";
-import { examResult, getResults } from "../controllers/resultController.js";
+import {
+  examResult,
+  getAllResults,
+  getResults,
+} from "../controllers/resultController.js";
 
 const router = Router();
 
+router.get("/", getAllResults);
 router.get("/:userId", getResults);
 router.post("/", examResult);
 

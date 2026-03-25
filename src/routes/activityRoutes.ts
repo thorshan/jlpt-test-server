@@ -5,7 +5,7 @@ const router = Router();
 
 router.get("/", async (req, res) => {
   try {
-    const logs = await Activity.find().sort({ createdAt: -1 }).limit(20);
+    const logs = await Activity.find().sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,

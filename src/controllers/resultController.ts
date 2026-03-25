@@ -42,3 +42,17 @@ export const getResults = asyncHandler(async (req: Request, res: Response) => {
     data: results,
   });
 });
+
+export const getAllResults = asyncHandler(
+  async (req: Request, res: Response) => {
+    const results = await Results.find()
+      .populate("user")
+      .populate("exam")
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      data: results,
+    });
+  },
+);
