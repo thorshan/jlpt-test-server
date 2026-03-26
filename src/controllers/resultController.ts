@@ -46,7 +46,7 @@ export const getResults = asyncHandler(async (req: Request, res: Response) => {
 export const getResultsById = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const results = await Results.findById(id);
+    const results = await Results.findById(id).populate("user").populate("exam");
     if (!results)
       return res.json({
         success: false,

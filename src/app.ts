@@ -9,6 +9,7 @@ import questionRoutes from "./routes/questionRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import resultRoutes from "./routes/resultRoutes.js";
 import activityRoutes from "./routes/activityRoutes.js";
+import requestRoutes from "./routes/requestRoutes.js";
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use("/api/questions", questionRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/results", resultRoutes);
 app.use("/api/activities", activityRoutes);
+app.use("/api/requests", requestRoutes);
 
 app.get("/api/health", (req, res) => res.send("System Online"));
 

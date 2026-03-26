@@ -1,5 +1,7 @@
 import Activity from "../models/Activity.js";
 import Exam from "../models/Exam.js";
+import Section from "../models/Section.js";
+import Question from "../models/Question.js";
 import { Request, Response, NextFunction } from "express";
 
 // 1. Helper for catching async errors
@@ -74,6 +76,12 @@ export const deleteExam = asyncHandler(async (req: Request, res: Response) => {
   if (!deletedExam) {
     return res.status(404).json({ success: false, message: "Exam not found" });
   }
+
+  const sections = await Section.find({ _id: { $in: deletedExam.sections } });
+  for (const section of sections) {
+    await Question.deleteMany({ _id: { $in: section.questions } });
+  }
+  await Section.deleteMany({ _id: { $in: deletedExam.sections } });
 
   await Activity.create({
     action: "EXAM_DELETED",

@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Name is required."],
       trim: true,
+      unique: true,
     },
     role: {
       type: String,
@@ -30,6 +31,6 @@ const userSchema = new mongoose.Schema(
   },
 );
 
-userSchema.index({ expiredAt: 1 }, { expireAfterSeconds: 0 });
+userSchema.index({ expireAt: 1 }, { expireAfterSeconds: 0 });
 
 export default mongoose.model("User", userSchema);
