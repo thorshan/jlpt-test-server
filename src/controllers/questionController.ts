@@ -11,7 +11,11 @@ export const asyncHandler =
 // 1. GET All Questions
 export const getQuestions = asyncHandler(
   async (req: Request, res: Response) => {
-    const questions = await Question.find().sort("-createdAt");
+    const query =
+      req.user?.role === "s-admin"
+        ? {}
+        : ({ createdBy: req.user?._id } as any);
+    const questions = await Question.find(query).sort("-createdAt");
     res.status(200).json({
       success: true,
       count: questions.length,
@@ -24,12 +28,16 @@ export const getQuestions = asyncHandler(
 export const createQuestion = asyncHandler(
   async (req: Request, res: Response) => {
     // FIX: Store the result in a variable
-    const newQuestion = await Question.create(req.body);
+    const newQuestion = await Question.create({
+      ...req.body,
+      createdBy: req.user?._id,
+    });
 
     await Activity.create({
       action: "QUESTION_CREATED",
       message: `${req.user?.name} created question [ID : ${newQuestion._id} | Title : ${newQuestion.text}]`,
       status: "SUCCESS",
+      userId: req.user?._id as any,
     });
 
     res.status(201).json({
@@ -60,6 +68,7 @@ export const updateQuestion = asyncHandler(
       action: "QUESTION_UPDATED",
       message: `${req.user?.name} updated question [ ID : ${id}]`,
       status: "SUCCESS",
+      userId: req.user?._id as any,
     });
 
     res.status(200).json({
@@ -86,6 +95,7 @@ export const deleteQuestion = asyncHandler(
       action: "QUESTION_DELETED",
       message: `${req.user?.name} deleted a question [ ID : ${id} | Title : ${deleted.text}]`,
       status: "SUCCESS",
+      userId: req.user?._id as any,
     });
 
     res.status(200).json({

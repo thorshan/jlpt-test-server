@@ -6,7 +6,11 @@ const router = Router();
 
 router.get("/", auth, async (req, res) => {
   try {
-    const logs = await Activity.find().sort({ createdAt: -1 });
+    const query =
+      req.user?.role === "s-admin"
+        ? {}
+        : ({ userId: req.user?._id } as any);
+    const logs = await Activity.find(query).sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,

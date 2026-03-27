@@ -10,7 +10,11 @@ export const asyncHandler =
 
 // 1. GET All Sections
 export const getSections = asyncHandler(async (req: Request, res: Response) => {
-  const sections = await Section.find()
+  const query =
+    req.user?.role === "s-admin"
+      ? {}
+      : ({ createdBy: req.user?._id } as any);
+  const sections = await Section.find(query)
     .populate("questions")
     .sort("-createdAt");
   res.status(200).json({
@@ -23,12 +27,16 @@ export const getSections = asyncHandler(async (req: Request, res: Response) => {
 // 2. CREATE Section
 export const createSections = asyncHandler(
   async (req: Request, res: Response) => {
-    const newSection = await Section.create(req.body);
+    const newSection = await Section.create({
+      ...req.body,
+      createdBy: req.user?._id,
+    });
 
     await Activity.create({
       action: "SECTION_CREATED",
       message: `${req.user?.name} created section [ ID : ${newSection._id} | Title : ${newSection.title}]`,
       status: "SUCCESS",
+      userId: req.user?._id as any,
     });
 
     res.status(201).json({
@@ -59,6 +67,7 @@ export const updateSection = asyncHandler(
       action: "SECTION_UPDATED",
       message: `${req.user?.name} updeated section [ ID : ${id}]`,
       status: "SUCCESS",
+      userId: req.user?._id as any,
     });
 
     res.status(200).json({
@@ -85,6 +94,7 @@ export const deleteSection = asyncHandler(
       action: "SECTION_DELETED",
       message: `${req.user?.name} deleted section [ ID : ${id} | Title : ${deleted.title}]`,
       status: "SUCCESS",
+      userId: req.user?._id as any,
     });
 
     res.status(200).json({

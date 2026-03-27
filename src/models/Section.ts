@@ -7,6 +7,7 @@ const sectionSchema = new mongoose.Schema(
     questions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Question" }],
     minPassedMark: { type: Number, default: 38 },
     duration: { type: Number, default: 30 },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true },
 );

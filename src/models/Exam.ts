@@ -16,6 +16,7 @@ const examSchema = new mongoose.Schema(
       enum: ["JLPT Old Questions", "Level Test", "Custom Test"],
       default: "Custom Test",
     },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true },
 );

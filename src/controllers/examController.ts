@@ -12,7 +12,11 @@ export const asyncHandler =
 
 // 2. GET All Exams (with populated sections)
 export const getExams = asyncHandler(async (req: Request, res: Response) => {
-  const exams = await Exam.find().populate("sections").sort("-createdAt");
+  const query =
+    req.user?.role === "s-admin"
+      ? {}
+      : ({ createdBy: req.user?._id } as any);
+  const exams = await Exam.find(query).populate("sections").sort("-createdAt");
   res.status(200).json({ success: true, data: exams });
 });
 
@@ -27,12 +31,13 @@ export const getExam = asyncHandler(async (req: Request, res: Response) => {
 
 // 3. CREATE Exam
 export const createExam = asyncHandler(async (req: Request, res: Response) => {
-  const newExam = await Exam.create(req.body);
+  const newExam = await Exam.create({ ...req.body, createdBy: req.user?._id });
 
   await Activity.create({
     action: "EXAM_CREATED",
     message: `${req.user?.name} created exam [ ID : ${newExam._id} | Title : ${newExam.title}]`,
     status: "SUCCESS",
+    userId: req.user?._id as any,
   });
 
   res.status(201).json({
@@ -59,6 +64,7 @@ export const updateExam = asyncHandler(async (req: Request, res: Response) => {
     action: "EXAM_UPDATED",
     message: `${req.user?.name} updeated exam [ ID : ${id}]`,
     status: "SUCCESS",
+    userId: req.user?._id as any,
   });
 
   res.status(200).json({
@@ -87,6 +93,7 @@ export const deleteExam = asyncHandler(async (req: Request, res: Response) => {
     action: "EXAM_DELETED",
     message: `${req.user?.name} deleted exam [ ID : ${id} | Title : ${deletedExam.title}]`,
     status: "SUCCESS",
+    userId: req.user?._id as any,
   });
 
   res.status(200).json({ success: true, data: null, message: "Exam deleted" });
