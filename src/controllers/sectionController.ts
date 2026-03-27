@@ -10,18 +10,24 @@ export const asyncHandler =
 
 // 1. GET All Sections
 export const getSections = asyncHandler(async (req: Request, res: Response) => {
-  const query =
-    req.user?.role === "s-admin"
-      ? {}
-      : ({ createdBy: req.user?._id } as any);
-  const sections = await Section.find(query)
-    .populate("questions")
-    .sort("-createdAt");
-  res.status(200).json({
-    success: true,
-    count: sections.length,
-    data: sections,
-  });
+  const { admin } = req.query;
+  const isSAdmin = req.user?.role === "s-admin";
+  const filter =
+    admin === "true" && !isSAdmin ? { createdBy: req.user?._id } : {};
+
+  try {
+    const sections = await Section.find(filter as any)
+      .populate("questions")
+      .sort("-createdAt");
+    res.status(200).json({
+      success: true,
+      count: sections.length,
+      data: sections,
+    });
+  } catch (error) {
+    // Handle error, though asyncHandler should catch most
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
 });
 
 // 2. CREATE Section

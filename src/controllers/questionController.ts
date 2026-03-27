@@ -11,16 +11,22 @@ export const asyncHandler =
 // 1. GET All Questions
 export const getQuestions = asyncHandler(
   async (req: Request, res: Response) => {
-    const query =
-      req.user?.role === "s-admin"
-        ? {}
-        : ({ createdBy: req.user?._id } as any);
-    const questions = await Question.find(query).sort("-createdAt");
+    const { admin } = req.query;
+  const isSAdmin = req.user?.role === "s-admin";
+  const filter =
+    admin === "true" && !isSAdmin ? { createdBy: req.user?._id } : {};
+
+  try {
+    const questions = await Question.find(filter as any).sort("-createdAt");
     res.status(200).json({
       success: true,
       count: questions.length,
       data: questions,
     });
+  } catch (error) {
+    // Handle error if necessary, or let asyncHandler catch it
+    throw error;
+  }
   },
 );
 
@@ -28,6 +34,7 @@ export const getQuestions = asyncHandler(
 export const createQuestion = asyncHandler(
   async (req: Request, res: Response) => {
     // FIX: Store the result in a variable
+    try {
     const newQuestion = await Question.create({
       ...req.body,
       createdBy: req.user?._id,
@@ -45,6 +52,10 @@ export const createQuestion = asyncHandler(
       message: "Question created.",
       data: newQuestion,
     });
+  } catch (error) {
+    // Handle error if necessary, or let asyncHandler catch it
+    throw error;
+  }
   },
 );
 

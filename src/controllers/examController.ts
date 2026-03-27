@@ -12,11 +12,14 @@ export const asyncHandler =
 
 // 2. GET All Exams (with populated sections)
 export const getExams = asyncHandler(async (req: Request, res: Response) => {
-  const query =
-    req.user?.role === "s-admin"
-      ? {}
-      : ({ createdBy: req.user?._id } as any);
-  const exams = await Exam.find(query).populate("sections").sort("-createdAt");
+  const { admin } = req.query;
+  const isSAdmin = req.user?.role === "s-admin";
+  const filter =
+    admin === "true" && !isSAdmin ? { createdBy: req.user?._id } : {};
+
+  const exams = await Exam.find(filter as any)
+    .populate("sections")
+    .sort("-createdAt");
   res.status(200).json({ success: true, data: exams });
 });
 
