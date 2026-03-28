@@ -65,7 +65,25 @@ export const getRandomAd = asyncHandler(async (req: Request, res: Response) => {
   res.json({ success: true, data: ad });
 });
 
+// @desc    Track ad click
+// @route   POST /api/ads/:id/click
+// @access  Public
+export const trackClick = asyncHandler(async (req: Request, res: Response) => {
+  const ad = await Ad.findById(req.params.id);
+
+  if (!ad) {
+    res.status(404);
+    throw new Error("Ad not found");
+  }
+
+  ad.clicks = (ad.clicks || 0) + 1;
+  await ad.save();
+
+  res.json({ success: true, message: "Click tracked" });
+});
+
 // @desc    Update ad
+
 // @route   PUT /api/ads/:id
 // @access  Private/s-Admin
 export const updateAd = asyncHandler(async (req: Request, res: Response) => {
