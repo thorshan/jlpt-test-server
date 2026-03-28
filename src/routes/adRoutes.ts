@@ -4,17 +4,19 @@ import {
   deleteAd,
   getAds,
   getRandomAd,
+  updateAd,
 } from "../controllers/adController.js";
-import { auth, admin } from "../middleware/authMiddleware.js";
+import { auth, sAdmin } from "../middleware/authMiddleware.js";
 
 const router = Router();
 
 // Public Routes
 router.get("/random", getRandomAd);
 
-// Admin Protected Routes
-router.get("/", auth, admin, getAds);
-router.post("/", auth, admin, createAd);
-router.delete("/:id", auth, admin, deleteAd);
+// Super-Admin Protected Routes
+router.get("/", auth, sAdmin, getAds);
+router.post("/", auth, sAdmin, createAd);
+router.put("/:id", auth, sAdmin, updateAd);
+router.delete("/:id", auth, sAdmin, deleteAd);
 
 export default router;

@@ -23,7 +23,21 @@ const adSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    status: {
+      type: String,
+      enum: ["Active", "Paused"],
+      default: "Active",
+    },
+    impressions: {
+      type: Number,
+      default: 0,
+    },
+    clicks: {
+      type: Number,
+      default: 0,
+    },
   },
+
   {
     timestamps: true,
   },

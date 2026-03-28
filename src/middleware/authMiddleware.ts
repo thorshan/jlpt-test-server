@@ -56,3 +56,12 @@ export const admin = (req: AuthRequest, res: Response, next: NextFunction) => {
     res.status(403).json({ success: false, message: "Not authorized as an admin" });
   }
 };
+
+export const sAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
+  if (req.user && req.user.role === "s-admin") {
+    next();
+  } else {
+    res.status(403).json({ success: false, message: "Not authorized as super admin" });
+  }
+};
+
