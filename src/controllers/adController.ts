@@ -6,7 +6,8 @@ import { asyncHandler } from "./userController.js";
 // @route   POST /api/ads
 // @access  Private/s-Admin
 export const createAd = asyncHandler(async (req: Request, res: Response) => {
-  const { title, content, duration, image } = req.body;
+  const { title, content, duration, image, ctaUrl } = req.body;
+
 
   if (!image) {
     res.status(400);
@@ -21,10 +22,12 @@ export const createAd = asyncHandler(async (req: Request, res: Response) => {
     title,
     content,
     image,
+    ctaUrl,
     duration: durationMonths,
     expiresAt,
     status: "Active",
   });
+
 
   res.status(201).json({ success: true, data: ad });
 });
@@ -87,7 +90,7 @@ export const trackClick = asyncHandler(async (req: Request, res: Response) => {
 // @route   PUT /api/ads/:id
 // @access  Private/s-Admin
 export const updateAd = asyncHandler(async (req: Request, res: Response) => {
-  const { title, content, image, status, duration } = req.body;
+  const { title, content, image, status, duration, ctaUrl } = req.body;
 
   const ad = await Ad.findById(req.params.id);
 
@@ -100,6 +103,8 @@ export const updateAd = asyncHandler(async (req: Request, res: Response) => {
   if (content) ad.content = content;
   if (image) ad.image = image;
   if (status) ad.status = status;
+  if (ctaUrl !== undefined) ad.ctaUrl = ctaUrl;
+
 
   if (duration) {
     const durationMonths = parseInt(duration as string) || 1;

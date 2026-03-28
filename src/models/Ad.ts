@@ -15,7 +15,12 @@ const adSchema = new mongoose.Schema(
       type: String,
       required: [true, "Image is required."],
     },
+    ctaUrl: {
+      type: String,
+      trim: true,
+    },
     duration: {
+
       type: Number,
       default: 1, // Duration in months
     },
