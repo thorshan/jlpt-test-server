@@ -13,19 +13,23 @@ import { auth, admin } from "../middleware/authMiddleware.js";
 const router = Router();
 
 // Multer Storage Configuration
+const uploadDir = path.join(process.cwd(), "uploads", "ads");
+
+// Ensure upload directory exists
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const dir = "uploads/ads";
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    cb(null, dir);
+    cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     cb(null, uniqueSuffix + path.extname(file.originalname));
   },
 });
+
 
 const upload = multer({ storage: storage });
 
