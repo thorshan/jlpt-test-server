@@ -1,19 +1,16 @@
 import { Request, Response } from "express";
 import Ad from "../models/Ad.js";
-import fs from "fs";
-import path from "path";
 import { asyncHandler } from "./userController.js";
 
 // @desc    Create new ad
 // @route   POST /api/ads
 // @access  Private/Admin
 export const createAd = asyncHandler(async (req: Request, res: Response) => {
-  const { title, content, duration } = req.body;
-  const image = req.file ? `/uploads/ads/${req.file.filename}` : null;
+  const { title, content, duration, image } = req.body;
 
   if (!image) {
     res.status(400);
-    throw new Error("Please upload an image");
+    throw new Error("Please provide an image URL");
   }
 
   const durationMonths = parseInt(duration as string) || 1;
@@ -61,16 +58,6 @@ export const deleteAd = asyncHandler(async (req: Request, res: Response) => {
   if (!ad) {
     res.status(404);
     throw new Error("Ad not found");
-  }
-
-  // Delete associated image file
-  if (ad.image) {
-    // Note: ad.image starts with /uploads/ads/
-    // We need to map it to the actual file system path
-    const imagePath = path.join(process.cwd(), ad.image);
-    if (fs.existsSync(imagePath)) {
-      fs.unlinkSync(imagePath);
-    }
   }
 
   await Ad.findByIdAndDelete(req.params.id);
