@@ -49,3 +49,10 @@ export const auth = async (
       .json({ success: false, message: "Not authorized, token failed" });
   }
 };
+export const admin = (req: AuthRequest, res: Response, next: NextFunction) => {
+  if (req.user && (req.user.role === "admin" || req.user.role === "s-admin")) {
+    next();
+  } else {
+    res.status(403).json({ success: false, message: "Not authorized as an admin" });
+  }
+};

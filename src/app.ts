@@ -10,11 +10,19 @@ import userRoutes from "./routes/userRoutes.js";
 import resultRoutes from "./routes/resultRoutes.js";
 import activityRoutes from "./routes/activityRoutes.js";
 import requestRoutes from "./routes/requestRoutes.js";
+import adRoutes from "./routes/adRoutes.js";
+import { initAdCleanup } from "./utils/adCleanup.js";
+
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static("uploads"));
+
+// Initialize background tasks
+initAdCleanup();
+
 
 app.use(async (req, res, next) => {
   try {
@@ -32,6 +40,8 @@ app.use("/api/users", userRoutes);
 app.use("/api/results", resultRoutes);
 app.use("/api/activities", activityRoutes);
 app.use("/api/requests", requestRoutes);
+app.use("/api/ads", adRoutes);
+
 
 app.get("/api/health", (req, res) => res.send("System Online"));
 
