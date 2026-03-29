@@ -6,6 +6,8 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Name is required."],
       trim: true,
+      index: true,
+      unique: false,
     },
     role: {
       type: String,
