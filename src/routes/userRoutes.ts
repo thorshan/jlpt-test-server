@@ -16,7 +16,7 @@ const router = Router();
 router.get("/", auth, getAllUsers);
 router.post("/", createUsers);
 router.get("/:id", getUser);
-router.put("/:id", updateUser);
+router.put("/:id", auth, updateUser);
 router.put("/:id/role", auth, updateRole);
 router.delete("/:id", clearUsers);
 
