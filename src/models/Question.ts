@@ -37,7 +37,7 @@ const questionSchema = new mongoose.Schema(
         "Integrated Reading Comprehension",
         "Thematic Comprehension",
         "Information Retrieval",
-        "Text-Based Comprehension",
+        "Task Based Comprehension",
         "Keypoints Comprehension",
         "General Outline Comprehension",
         "Verbal Expression",
