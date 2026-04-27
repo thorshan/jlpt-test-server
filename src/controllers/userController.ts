@@ -109,7 +109,7 @@ export const updateRole = asyncHandler(async (req: Request, res: Response) => {
   }
 
   user.role = "admin";
-  user.expireAt = undefined as any;
+  user.expireAt = null as any;
   await user.save();
 
   await Activity.create({

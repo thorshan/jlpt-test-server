@@ -25,13 +25,12 @@ const userSchema = new mongoose.Schema(
     expireAt: {
       type: Date,
       default: () => new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+      index: { expires: 0 },
     },
   },
   {
     timestamps: true,
   },
 );
-
-userSchema.index({ expireAt: 1 }, { expireAfterSeconds: 0 });
 
 export default mongoose.model("User", userSchema);
