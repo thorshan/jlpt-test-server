@@ -18,9 +18,16 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "N5",
     },
-    token: {
+    email: {
       type: String,
       unique: true,
+    },
+    password: {
+      type: String,
+    },
+    token: {
+      type: String,
+      unique: false,
     },
     expireAt: {
       type: Date,

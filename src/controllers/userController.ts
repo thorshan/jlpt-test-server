@@ -15,13 +15,14 @@ export const asyncHandler =
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 
-export const createUsers = asyncHandler(async (req: Request, res: Response) => {
-  const { name, token, role, level } = req.body;
+export const createGuest = asyncHandler(async (req: Request, res: Response) => {
+  const { name, email, token, level, role } = req.body;
 
   const hashedToken = await bcrypt.hash(token, 10);
 
   const user = await User.create({
     name,
+    email,
     token: hashedToken,
     role,
     level,
@@ -39,6 +40,7 @@ export const createUsers = asyncHandler(async (req: Request, res: Response) => {
       data: {
         _id: user._id,
         name: user.name,
+        email: user.email,
         role: user.role,
         token: token,
       },
@@ -47,15 +49,49 @@ export const createUsers = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
-export const loginUser = asyncHandler(async (req: Request, res: Response) => {
-  const { name, token } = req.body;
+export const createUsers = asyncHandler(async (req: Request, res: Response) => {
+  const { name, role, level, email, password } = req.body;
 
-  if (!name || !token) {
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const user = await User.create({
+    name,
+    role,
+    level,
+    email,
+    password: hashedPassword,
+  });
+
+  if (user) {
+    await Activity.create({
+      action: "USER_JOINED",
+      message: `New user: ${user.name} has joined the engine`,
+      status: "SUCCESS",
+    });
+
+    res.status(201).json({
+      success: true,
+      data: {
+        _id: user._id,
+        name: user.name,
+        role: user.role,
+        email: user.email,
+        password: user.password,
+      },
+      token: generateToken(user._id.toString()),
+    });
+  }
+});
+
+export const loginUser = asyncHandler(async (req: Request, res: Response) => {
+  const { email, token } = req.body;
+
+  if (!email || !token) {
     res.status(400);
     throw new Error("Please provide both name and access token");
   }
 
-  const user = await User.findOne({ name });
+  const user = await User.findOne({ email });
 
   const storedHashedToken = user?.token;
 
@@ -74,6 +110,7 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
         data: {
           _id: user._id,
           name: user.name,
+          email: user.email,
           level: user.level,
           role: user.role,
         },
@@ -84,6 +121,46 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
 
   res.status(401);
   throw new Error("Invalid name or access token");
+});
+
+export const loginCollab = asyncHandler(async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    res.status(400);
+    throw new Error("Please provide both email and password");
+  }
+
+  const user = await User.findOne({ email });
+
+  const storedHashedPassword = user?.password;
+
+  if (user && typeof storedHashedPassword === "string") {
+    const isMatch = await bcrypt.compare(password, storedHashedPassword);
+
+    if (isMatch) {
+      await Activity.create({
+        action: "USER_LOGGED_IN",
+        message: `User: ${user.name} authenticated via Admin Console`,
+        status: "SUCCESS",
+      });
+
+      return res.json({
+        success: true,
+        data: {
+          _id: user._id,
+          name: user.name,
+          level: user.level,
+          role: user.role,
+          email: user.email,
+        },
+        token: generateToken(user._id.toString()),
+      });
+    }
+  }
+
+  res.status(401);
+  throw new Error("Invalid email or password");
 });
 
 export const updateUser = asyncHandler(async (req: Request, res: Response) => {
