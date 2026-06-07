@@ -5,7 +5,7 @@ const collabsSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  catagory: {
+  category: {
     type: String,
     enum: [
       "Language School",
