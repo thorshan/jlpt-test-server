@@ -9,6 +9,9 @@ const userSchema = new mongoose.Schema(
       index: true,
       unique: false,
     },
+    dob: {
+      type: Date,
+    },
     role: {
       type: String,
       enum: ["user", "admin", "s-admin"],

@@ -16,13 +16,14 @@ export const asyncHandler =
   };
 
 export const createGuest = asyncHandler(async (req: Request, res: Response) => {
-  const { name, email, token, level, role } = req.body;
+  const { name, email, token, level, role, dob } = req.body;
 
   const hashedToken = await bcrypt.hash(token, 10);
 
   const user = await User.create({
     name,
     email,
+    dob,
     token: hashedToken,
     role,
     level,
@@ -41,6 +42,7 @@ export const createGuest = asyncHandler(async (req: Request, res: Response) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        dob: user.dob,
         role: user.role,
         token: token,
       },
@@ -50,12 +52,13 @@ export const createGuest = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const createUsers = asyncHandler(async (req: Request, res: Response) => {
-  const { name, role, level, email, password } = req.body;
+  const { name, role, level, email, password, dob } = req.body;
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await User.create({
     name,
+    dob,
     role,
     level,
     email,
@@ -74,6 +77,7 @@ export const createUsers = asyncHandler(async (req: Request, res: Response) => {
       data: {
         _id: user._id,
         name: user.name,
+        dob: user.dob,
         role: user.role,
         email: user.email,
         password: user.password,
