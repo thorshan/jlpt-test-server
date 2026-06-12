@@ -46,7 +46,9 @@ export const getResults = asyncHandler(async (req: Request, res: Response) => {
 export const getResultsById = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const results = await Results.findById(id).populate("user").populate("exam");
+    const results = await Results.findById(id)
+      .populate("user")
+      .populate("exam");
     if (!results)
       return res.json({
         success: false,
@@ -69,6 +71,29 @@ export const getAllResults = asyncHandler(
     res.json({
       success: true,
       data: results,
+    });
+  },
+);
+
+export const getResultByUser = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    if (id === "true" && !req.user?._id) {
+      return res
+        .status(401)
+        .json({ success: false, message: "User not authenticated" });
+    }
+
+    const filter = typeof id === "string" ? { user: req.user!._id } : {};
+
+    const result = await Results.find(filter)
+      .populate("user exam")
+      .sort("-createdAt");
+
+    res.json({
+      success: true,
+      data: result,
     });
   },
 );
