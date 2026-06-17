@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import Collabs from "../models/Collabs.js";
 import User from "../models/User.js";
+import mongoose, { Types } from "mongoose";
 
 export const asyncHandler =
   (fn: Function) => (req: Request, res: Response, next: NextFunction) => {
@@ -45,6 +46,14 @@ export const addUserToCollab = asyncHandler(
       const user = await User.findById(id);
       if (user) {
         user.password = user.token!;
+        if (
+          typeof collabId !== "string" ||
+          !mongoose.Types.ObjectId.isValid(collabId)
+        ) {
+          throw new Error("Invalid collaborator ID");
+        }
+
+        user.association = new mongoose.Types.ObjectId(collabId);
         await user.save();
       }
       res.status(201).json({

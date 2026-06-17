@@ -7,6 +7,7 @@ import {
   getUser,
   loginCollab,
   loginUser,
+  updateName,
   updateRole,
   updateUser,
 } from "../controllers/userController.js";
@@ -20,6 +21,7 @@ router.post("/", createUsers);
 router.post("/guest", createGuest);
 router.get("/:id", getUser);
 router.put("/:id", updateUser);
+router.put("/:id/update-name", updateName);
 router.put("/:id/role", auth, updateRole);
 router.delete("/:id", clearUsers);
 

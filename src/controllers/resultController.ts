@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import Results from "../models/Results.js";
 import Activity from "../models/Activity.js";
+import User from "../models/User.js";
 
 // Helper for catching async errors
 export const asyncHandler =
@@ -10,6 +11,12 @@ export const asyncHandler =
 
 export const examResult = asyncHandler(async (req: Request, res: Response) => {
   const results = await Results.create(req.body);
+
+  await User.findByIdAndUpdate(
+    req.user?._id,
+    { $push: { finishedExams: results._id } },
+    { new: true },
+  );
 
   await Activity.create({
     action: "RESULT_CREATED",
@@ -33,9 +40,7 @@ export const getResults = asyncHandler(async (req: Request, res: Response) => {
     return;
   }
 
-  const results = await Results.find({ user: userId })
-    .populate("user")
-    .populate("exam");
+  const results = await Results.find({ user: userId }).populate("user exam");
 
   res.json({
     success: true,
@@ -46,9 +51,13 @@ export const getResults = asyncHandler(async (req: Request, res: Response) => {
 export const getResultsById = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const results = await Results.findById(id)
-      .populate("user")
-      .populate("exam");
+    const results = await Results.findById(id).populate({
+      path: "user",
+      populate: {
+        path: "association",
+        select: "name",
+      },
+    });
     if (!results)
       return res.json({
         success: false,
@@ -64,8 +73,7 @@ export const getResultsById = asyncHandler(
 export const getAllResults = asyncHandler(
   async (req: Request, res: Response) => {
     const results = await Results.find()
-      .populate("user")
-      .populate("exam")
+      .populate("user exam")
       .sort({ createdAt: -1 });
 
     res.json({

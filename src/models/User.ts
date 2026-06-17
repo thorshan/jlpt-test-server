@@ -32,10 +32,26 @@ const userSchema = new mongoose.Schema(
       type: String,
       unique: false,
     },
+    association: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Collabs",
+    },
+    finishedExams: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Results",
+      },
+    ],
     expireAt: {
       type: Date,
       default: () => new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
       index: { expires: 0 },
+    },
+    lastNameChanged: {
+      type: Date,
+    },
+    lastLevelChanged: {
+      type: Date,
     },
   },
   {

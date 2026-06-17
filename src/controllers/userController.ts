@@ -95,7 +95,7 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
     throw new Error("Please provide both name and access token");
   }
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).populate("association");
 
   const storedHashedToken = user?.token;
 
@@ -135,7 +135,7 @@ export const loginCollab = asyncHandler(async (req: Request, res: Response) => {
     throw new Error("Please provide both email and password");
   }
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).populate("association");
 
   const storedHashedPassword = user?.password;
 
@@ -182,7 +182,7 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const updateRole = asyncHandler(async (req: Request, res: Response) => {
-  const user = await User.findById(req.params.id);
+  const user = await User.findById(req.params.id).populate("association");
 
   if (!user) {
     res.status(404);
@@ -203,16 +203,23 @@ export const updateRole = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getUser = asyncHandler(async (req: Request, res: Response) => {
-  const user = await User.findById(req.params.id);
+  const user = await User.findById(req.params.id).populate("association");
   res.json({ success: true, data: user });
 });
 
 export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
-  const users = await User.find().sort("-createdAt");
+  const users = await User.find().populate("association").sort("-createdAt");
   res.json({ success: true, data: users });
 });
 
 export const clearUsers = asyncHandler(async (req: Request, res: Response) => {
   await User.findByIdAndDelete(req.params.id);
   res.json({ success: true, message: "All user data is cleared" });
+});
+
+export const updateName = asyncHandler(async (req: Request, res: Response) => {
+  const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
+  res.json({ success: true, data: user, message: "Name updated." });
 });
